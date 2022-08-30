@@ -16,7 +16,7 @@ public:
     QString getAccessToken();
     QString getUserType();
 
-private:
+protected:
     QString username;
     QString uuid;
     QString accessToken;

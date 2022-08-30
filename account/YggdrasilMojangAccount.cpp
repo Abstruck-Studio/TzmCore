@@ -5,7 +5,7 @@ QByteArray YggdrasilMojangAccount::jsonBuilder(QString email, QString password){
         infoData.insert("name", "Minecraft");
         infoData.insert("version", 1);
         objectData.insert("agent", infoData);
-        objectData.insert("clientToken", "TzmCore");
+        objectData.insert("clientToken", TzmCore);
         objectData.insert("password", password);
         objectData.insert("username", email);
         QJsonDocument document(objectData);
@@ -27,5 +27,19 @@ void YggdrasilMojangAccount::login(QString email, QString password){
 
         QString str = reply->readAll();
 
-        return;
+        QJsonObject jsonObject = qStringToQJsonObject(str);
+
+        if (jsonObject.contains("error")){
+            qDebug() << jsonObject["error"]        << endl
+                     << jsonObject["errorMessage"] << endl
+                     << jsonObject["cause"]        << endl;
+            return;
+        }
+
+        if (jsonObject.contains("accessToken")){
+            username    = jsonObject["selectedProfile"].toObject()["name"].toString();
+            uuid        = jsonObject["selectedProfile"].toObject()["id"].toString();
+            accessToken = jsonObject["accessToken"].toString();
+            userType    = "mojang";
+        }
 }
